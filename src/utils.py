@@ -31,17 +31,17 @@ def common_card_info(transactions_data: DataFrame) -> list[dict]:
                                        (transactions_data["Категория"] != "Переводы") &
                                        (transactions_data["Категория"] != "Пополнения")]
     spend_data_by_card = spend_data.groupby("Номер карты")
-    for spend in spend_data_by_card:
-        cardinfo = {}
-        cardinfo["last_digits"] = spend["Номер карты"]
-        cardinfo["total_spent"] = spend["Сумма платежа"]
-        cardinfo["cashback"] = spend["Сумма платежа"] // 100
-        returned_list.append(cardinfo)
-    result = spend_data_by_card.apply(pd.Series.sum)
-    print(returned_list)
-
-
-testframe = pd.read_excel(base_dir.joinpath("data", "operations.xlsx"))
-common_card_info(testframe)
-
-
+#     for spend in spend_data_by_card:
+#         cardinfo = {}
+#         cardinfo["last_digits"] = spend_data_by_card.loc[spend, "Номер карты"]
+#         cardinfo["total_spent"] = spend_data_by_card.loc[spend, "Сумма платежа"]
+#         cardinfo["cashback"] = spend_data_by_card.loc[spend, "Сумма платежа"] // 100
+#         returned_list.append(cardinfo)
+#     result = spend_data_by_card.apply(pd.Series.sum)
+#     print(returned_list)
+#
+#
+# testframe = pd.read_excel(base_dir.joinpath("data", "operations.xlsx"))
+# common_card_info(testframe)
+#
+#
