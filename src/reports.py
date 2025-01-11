@@ -3,8 +3,7 @@ from pandas import DataFrame
 import json
 import pandas as pd
 
-
-test_dataframe = pd.DataFrame({"Дата платежа": [datetime(2025, 1, 5, 0, 0, 0),
+testdataframe = pd.DataFrame({"Дата платежа": [datetime(2025, 1, 5, 0, 0, 0),
                                           datetime(2024, 12, 20, 0, 0, 0),
                                           datetime(2024, 8, 6, 0, 0, 0),
                                           datetime(2024, 7, 6, 0, 0, 0),],
@@ -17,11 +16,14 @@ def sending_by_category(transactions_data: DataFrame, categoryname: str, date=da
     report_frame = transactions_data.loc[(transactions_data["Дата платежа"] >= report_date) &
                                          (transactions_data["Категория"] == categoryname)]
     report_dict = report_frame.to_dict("index")
-    print(report_dict)
-    for transaction in report_dict:
-        str_date = transaction["Дата платежа"].strftime("%d.%m.%Y")
-        transaction["Дата платежа"] = str_date
-    report_json = json.dumps(report_dict)
+    report_list = []
+    for value in report_dict.values():
+        report_list.append(value)
+    for transaction in report_list:
+        transaction["Дата платежа"] = transaction["Дата платежа"].strftime("%d.%m.%Y")
+    print(report_list)
+    report_json = json.dumps(report_list)
+    print(report_json)
     return report_json
 
-sending_by_category(test_dataframe, "Супермаркеты")
+sending_by_category(testdataframe, "Супермаркеты")
