@@ -3,7 +3,7 @@ from pandas import DataFrame
 import json
 
 
-def sending_by_category(transactions_data: DataFrame, categoryname: str, date=datetime.now()) -> json:
+def sending_by_category(transactions_data: DataFrame, categoryname: str, date: datetime=datetime.now()) -> json:
     """Функция возвращает траты по заданной категории за последние три месяца от переданной даты. Если дата не передана,
     то по умолчанию используется текущая"""
     report_date = date - timedelta(days=90)
