@@ -1,13 +1,7 @@
 from datetime import datetime, timedelta
 from pandas import DataFrame
 import json
-import pandas as pd
 
-testdataframe = pd.DataFrame({"Дата платежа": [datetime(2025, 1, 5, 0, 0, 0),
-                                          datetime(2024, 12, 20, 0, 0, 0),
-                                          datetime(2024, 8, 6, 0, 0, 0),
-                                          datetime(2024, 7, 6, 0, 0, 0),],
-                         "Категория":["Супермаркеты", "Супермаркеты", "Канцтовары", "Фастфуд"]})
 
 def sending_by_category(transactions_data: DataFrame, categoryname: str, date=datetime.now()) -> json:
     """Функция возвращает траты по заданной категории за последние три месяца от переданной даты. Если дата не передана,
@@ -21,9 +15,5 @@ def sending_by_category(transactions_data: DataFrame, categoryname: str, date=da
         report_list.append(value)
     for transaction in report_list:
         transaction["Дата платежа"] = transaction["Дата платежа"].strftime("%d.%m.%Y")
-    print(report_list)
-    report_json = json.dumps(report_list)
-    print(report_json)
+    report_json = json.dumps(report_list, ensure_ascii=False, indent=4)
     return report_json
-
-sending_by_category(testdataframe, "Супермаркеты")
