@@ -1,7 +1,9 @@
 import pytest
+from unittest.mock import patch, Mock
 
 from src.utils import filter_data
 from src.utils import calculate_expenses_and_income
+from src.utils import currency_ratings
 
 
 @pytest.mark.parametrize("date, interval, expected_rezult", [
@@ -44,3 +46,17 @@ def test_calculate_expenses_and_income_second(testing_dataframe_4):
     assert testing_data[4] == 8046.0
     assert testing_data[5] == [('Пополнения', 5546.0),
                                ('Переводы', 2500.0)]
+
+
+@patch('requests.request')
+def test_currency_ratings(mock_api_responce):
+    mock_response_usd = Mock()
+    mock_response_usd.text = 100.0
+
+    mock_response_eur = Mock()
+    mock_response_eur.text = 110.0
+
+    mock_api_responce.side_effect = [mock_response_usd, mock_response_eur]
+
+    assert currency_ratings() == [{'currency': 'USD', 'rate': 100.0},
+                                  {'currency': 'EUR', 'rate': 110.0}]

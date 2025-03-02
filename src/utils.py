@@ -3,6 +3,15 @@ import pandas as pd
 import os
 from datetime import datetime, timedelta
 from collections import defaultdict
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+
+payload = {}
+headers = {
+    "apikey": os.getenv("API_KEY")
+}
 
 data_path = f"{os.path.dirname(os.getcwd())}\\data\\operations.xlsx"
 
@@ -67,6 +76,22 @@ def calculate_expenses_and_income(df, start_date: str, end_date: str):
     total_expenses = round(total_expenses, 2)
 
     return total_expenses, main_expenses, other_expenses, sorted_cash_and_transfer, total_income, sorted_income
+
+
+def currency_ratings():
+    list_of_currencies = []
+    valute_code = 'USD'
+    url = f'https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={valute_code}&amount=1'
+    while True:
+        currency_dict = {}
+        currency_dict['currency'] = valute_code
+        response = requests.request('GET', url, headers=headers, data=payload)
+        currency_dict['rate'] = response.text
+        list_of_currencies.append(currency_dict)
+        if valute_code == 'EUR':
+            return list_of_currencies
+        else:
+            valute_code = 'EUR'
 
 
 if __name__ == "__main__":
