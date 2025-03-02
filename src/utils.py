@@ -1,47 +1,33 @@
 import json
-from datetime import datetime
 import pandas as pd
-from pandas.core.interchange.dataframe_protocol import DataFrame
-from src.settings import base_dir
 import os
+from datetime import datetime, timedelta
+from collections import defaultdict
+
+data_path = f"{os.path.dirname(os.getcwd())}\\data\\operations.xlsx"
+
+df = pd.read_excel(data_path)
 
 
-def times_in_greetings(timedate: str) -> str:
-    """Принимает на вход строку с датой и временем в формате YYYY-MM-DD HH:MM:SS. Возвращает строку с приветствием,
-    в зависимости от времени суток во входящей строке"""
-    hour = int(timedate[-8:-6])
-    if hour < 4:
-        greetings = "Доброй ночи"
-    elif 4 < hour < 12:
-        greetings = "Доброе утро"
-    elif 11 < hour < 18:
-        greetings = "Добрый день"
+def filter_data(date_str: str, range_type: str):
+    """Функция, которая устанавливает диапазон дат. На вход принимает строку с конечной датой (в формате дд.мм.гггг) и
+    строковый параметр, отвечающий за величину диапазона: W - неделя, на которую приходится дата, M - месяц, Y - год,
+    ALL - все данные до указанной даты"""
+    date = datetime.strptime(date_str, "%d.%m.%Y")
+    end_date = date
+    if range_type == 'W':
+        start_date = end_date - timedelta(days=end_date.weekday())
+    elif range_type == 'M':
+        start_date = datetime(date.year, date.month, 1)
+    elif range_type == 'Y':
+        start_date = datetime(date.year, 1, 1)
+    elif range_type == 'ALL':
+        start_date = datetime(1900, 1, 1)
     else:
-        greetings = "Добрый вечер"
-    print (hour)
-    return greetings
+        start_date = datetime(date.year, date.month, 1)
+
+    return start_date, end_date
 
 
-def common_card_info(transactions_data: DataFrame) -> list[dict]:
-    """Принимает на вход датафрейм с информацией о банковских транзакциях. Возвращает список словарей по каждой карте из
-    датафрейма с номером карты, общей суммой расходов и заработанным кэшбэком. В расходах не учитываются переводы и
-    пополнения"""
-    returned_list = []
-    spend_data = transactions_data.loc[(transactions_data["Статус"] == "OK") &
-                                       (transactions_data["Категория"] != "Переводы") &
-                                       (transactions_data["Категория"] != "Пополнения")]
-    spend_data_by_card = spend_data.groupby("Номер карты")
-#     for spend in spend_data_by_card:
-#         cardinfo = {}
-#         cardinfo["last_digits"] = spend_data_by_card.loc[spend, "Номер карты"]
-#         cardinfo["total_spent"] = spend_data_by_card.loc[spend, "Сумма платежа"]
-#         cardinfo["cashback"] = spend_data_by_card.loc[spend, "Сумма платежа"] // 100
-#         returned_list.append(cardinfo)
-#     result = spend_data_by_card.apply(pd.Series.sum)
-#     print(returned_list)
-#
-#
-# testframe = pd.read_excel(base_dir.joinpath("data", "operations.xlsx"))
-# common_card_info(testframe)
-#
-#
+if __name__ == "__main__":
+    print(filter_data("02.03.2025", "M"))
