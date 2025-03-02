@@ -4,6 +4,7 @@ from unittest.mock import patch, Mock
 from src.utils import filter_data
 from src.utils import calculate_expenses_and_income
 from src.utils import currency_ratings
+from src.utils import stock_pricer
 
 
 @pytest.mark.parametrize("date, interval, expected_rezult", [
@@ -60,3 +61,35 @@ def test_currency_ratings(mock_api_responce):
 
     assert currency_ratings() == [{'currency': 'USD', 'rate': 100.0},
                                   {'currency': 'EUR', 'rate': 110.0}]
+
+    assert mock_api_responce.call_count == 2
+
+
+@patch('requests.get')
+def test_stock_pricer(mock_api_responce):
+    mock_response_aapl = Mock()
+    mock_response_aapl.json.return_value = {"price": 150.12}
+
+    mock_response_amzn = Mock()
+    mock_response_amzn.json.return_value = {"price": 3173.18}
+
+    mock_response_googl = Mock()
+    mock_response_googl.json.return_value = {"price": 2742.39}
+
+    mock_response_msft = Mock()
+    mock_response_msft.json.return_value = {"price": 296.71}
+
+    mock_response_tsla = Mock()
+    mock_response_tsla.json.return_value = {"price": 1007.08}
+
+    mock_api_responce.side_effect = [mock_response_aapl, mock_response_amzn, mock_response_googl, mock_response_msft,
+                                     mock_response_tsla]
+
+    assert stock_pricer() == [{'price': 150.12, 'stock': 'AAPL'},
+                              {'price': 3173.18, 'stock': 'AMZN'},
+                              {'price': 2742.39, 'stock': 'GOOGL'},
+                              {'price': 296.71, 'stock': 'MSFT'},
+                              {'price': 1007.08, 'stock': 'TSLA'}]
+
+    assert mock_api_responce.call_count == 5
+

@@ -13,6 +13,8 @@ headers = {
     "apikey": os.getenv("API_KEY")
 }
 
+headers_stocks = {'X-Api-Key': os.getenv("STOCK_API_KEY")}
+
 data_path = f"{os.path.dirname(os.getcwd())}\\data\\operations.xlsx"
 
 
@@ -79,6 +81,7 @@ def calculate_expenses_and_income(df, start_date: str, end_date: str):
 
 
 def currency_ratings():
+    """Функция, которая возвращает текущий курс американского доллара к рублю и евро к рублю"""
     list_of_currencies = []
     valute_code = 'USD'
     url = f'https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={valute_code}&amount=1'
@@ -94,5 +97,14 @@ def currency_ratings():
             valute_code = 'EUR'
 
 
-if __name__ == "__main__":
-    print(filter_data("02.03.2025", "M"))
+def stock_pricer():
+    """Функция, котрая возвращает курс акций из S&P 500"""
+    returned_list = []
+    list_of_companies = ["AAPL", "AMZN", "GOOGL", "MSFT", "TSLA"]
+    stock_url = 'https://api.api-ninjas.com/v1/stockprice?ticker={}'
+    for company in list_of_companies:
+        response = requests.get(stock_url.format(company), headers=headers_stocks)
+        stock_data = response.json()
+        returned_list.append({"stock": company, "price": stock_data["price"]})
+
+    return returned_list
