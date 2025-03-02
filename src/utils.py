@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 import requests
 from dotenv import load_dotenv
+import logging
 
 load_dotenv()
 
@@ -16,6 +17,13 @@ headers = {
 headers_stocks = {'X-Api-Key': os.getenv("STOCK_API_KEY")}
 
 data_path = f"{os.path.dirname(os.getcwd())}\\data\\operations.xlsx"
+
+logger = logging.getLogger("utils")
+logger.setLevel(logging.INFO)
+file_handler = logging.FileHandler("logs\\utils.log")
+file_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname): %(message)s")
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
 
 
 def filereader(filepath: str):
@@ -31,15 +39,17 @@ def filter_data(date_str: str, range_type: str):
     date = datetime.strptime(date_str, '%d.%m.%Y')
     end_date = date
     if range_type == 'W':
+        logger.info("В качестве диапазона поиска установили неделю")
         start_date = end_date - timedelta(days=end_date.weekday())
     elif range_type == 'M':
+        logger.info("В качестве диапазона поиска установили месяц")
         start_date = datetime(date.year, date.month, 1)
     elif range_type == 'Y':
+        logger.info("В качестве диапазона поиска установили год")
         start_date = datetime(date.year, 1, 1)
-    elif range_type == 'ALL':
-        start_date = datetime(1900, 1, 1)
     else:
-        start_date = datetime(date.year, date.month, 1)
+        logger.info("Пользователь смотрит все операции")
+        start_date = datetime(1900, 1, 1)
 
     return start_date, end_date
 
@@ -54,6 +64,7 @@ def calculate_expenses_and_income(transactions_df, start_date: str, end_date: st
     category_expenses = defaultdict(float)
     category_income = defaultdict(float)
     cash_and_transfer_expenses = defaultdict(float)
+    logger.info("Начали собирать информацию по банковским операциям пользователя и сортировку по категориям")
 
     for _, row in transactions_df.iterrows():
         transaction_date = datetime.strptime(row['Дата платежа'], '%d.%m.%Y')
@@ -82,6 +93,7 @@ def calculate_expenses_and_income(transactions_df, start_date: str, end_date: st
     main_income = [{'category': category, 'amount': amount} for category, amount in sorted_income]
 
     total_expenses = round(total_expenses, 2)
+    logger.info("Завершили сбор информацию по банковским операциям пользователя и сортировку по категориям")
 
     return total_expenses, main_expenses, other_expenses, sorted_cash_and_transfer, total_income, main_income
 
@@ -91,6 +103,7 @@ def currency_ratings():
     list_of_currencies = []
     valute_code = 'USD'
     url = f'https://api.apilayer.com/exchangerates_data/convert?to=RUB&from={valute_code}&amount=1'
+    logger.info("Начали собирать информацию по курсам валют")
     while True:
         currency_dict = {}
         currency_dict['currency'] = valute_code
@@ -98,6 +111,7 @@ def currency_ratings():
         currency_dict['rate'] = response.text
         list_of_currencies.append(currency_dict)
         if valute_code == 'EUR':
+            logger.info("Завершили сбор информацию о курсах валют")
             return list_of_currencies
         else:
             valute_code = 'EUR'
@@ -108,9 +122,10 @@ def stock_pricer():
     returned_list = []
     list_of_companies = ["AAPL", "AMZN", "GOOGL", "MSFT", "TSLA"]
     stock_url = 'https://api.api-ninjas.com/v1/stockprice?ticker={}'
+    logger.info("Начали собирать информацию по котировкам акций")
     for company in list_of_companies:
         response = requests.get(stock_url.format(company), headers=headers_stocks)
         stock_data = response.json()
         returned_list.append({"stock": company, "price": stock_data["price"]})
-
+    logger.info("Завершили сбор информацию по котировкам акций")
     return returned_list
