@@ -44,7 +44,7 @@ def filter_data(date_str: str, range_type: str):
     return start_date, end_date
 
 
-def calculate_expenses_and_income(df, start_date: str, end_date: str):
+def calculate_expenses_and_income(transactions_df, start_date: str, end_date: str):
     """Функция принимает на вход датафрейм с транзакциями, начальную и конечную даты в строковом формате дд.мм.гггг.
     Возвращает: общую сумму расходов; список с 7 основными категориями расходов, отсортированных по убыванию; сумму
     расходов из категорий, не вошедших в 7 основных; сумму расходов в категориях "Переводы" и "Наличные"; общую сумму
@@ -55,7 +55,7 @@ def calculate_expenses_and_income(df, start_date: str, end_date: str):
     category_income = defaultdict(float)
     cash_and_transfer_expenses = defaultdict(float)
 
-    for _, row in df.iterrows():
+    for _, row in transactions_df.iterrows():
         transaction_date = datetime.strptime(row['Дата платежа'], '%d.%m.%Y')
         if start_date <= transaction_date <= end_date:
             if row['Сумма платежа'] < 0:
@@ -70,14 +70,20 @@ def calculate_expenses_and_income(df, start_date: str, end_date: str):
 
     sorted_expenses = sorted(category_expenses.items(), key=lambda x: x[1], reverse=True)
     sorted_income = sorted(category_income.items(), key=lambda x: x[1], reverse=True)
-    sorted_cash_and_transfer = sorted(cash_and_transfer_expenses.items(), key=lambda x: x[1], reverse=True)
 
-    main_expenses = sorted_expenses[:7]
+    main_expenses = [{'category': category, 'amount': amount} for category, amount in sorted_expenses[:7]]
     other_expenses = sum(amount for category, amount in sorted_expenses[7:])
+
+    sorted_cash_and_transfer = [
+        {"category": category, "amount": amount}
+        for category, amount in sorted(cash_and_transfer_expenses.items(), key=lambda x: x[1], reverse=True)
+    ]
+
+    main_income = [{'category': category, 'amount': amount} for category, amount in sorted_income]
 
     total_expenses = round(total_expenses, 2)
 
-    return total_expenses, main_expenses, other_expenses, sorted_cash_and_transfer, total_income, sorted_income
+    return total_expenses, main_expenses, other_expenses, sorted_cash_and_transfer, total_income, main_income
 
 
 def currency_ratings():

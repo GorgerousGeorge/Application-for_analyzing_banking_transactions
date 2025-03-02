@@ -34,19 +34,19 @@ def test_calculate_expenses_and_income_second(testing_dataframe_4):
     interval_date = filter_data("28.02.2025", "Y")
     testing_data = (calculate_expenses_and_income(testing_dataframe_4, interval_date[0], interval_date[1]))
     assert testing_data[0] == 11259.26
-    assert testing_data[1] == [('Наличные', 8000.0),
-                               ('Переводы', 1950.0),
-                               ('Другое', 381.48),
-                               ('Канцтовары', 349.0),
-                               ('Каршеринг', 257.89),
-                               ('Супермаркеты', 160.89),
-                               ('Фастфуд', 120.0)]
+    assert testing_data[1] == [{'amount': 8000.0, 'category': 'Наличные'},
+                               {'amount': 1950.0, 'category': 'Переводы'},
+                               {'amount': 381.48, 'category': 'Другое'},
+                               {'amount': 349.0, 'category': 'Канцтовары'},
+                               {'amount': 257.89, 'category': 'Каршеринг'},
+                               {'amount': 160.89, 'category': 'Супермаркеты'},
+                               {'amount': 120.0, 'category': 'Фастфуд'}]
     assert testing_data[2] == 40.0
-    assert testing_data[3] ==  [('Наличные', 8000.0),
-                                ('Переводы', 1950.0)]
+    assert testing_data[3] ==  [{'amount': 8000.0, 'category': 'Наличные'},
+                                {'amount': 1950.0, 'category': 'Переводы'}]
     assert testing_data[4] == 8046.0
-    assert testing_data[5] == [('Пополнения', 5546.0),
-                               ('Переводы', 2500.0)]
+    assert testing_data[5] == [{'amount': 5546.0, 'category': 'Пополнения'},
+                               {'amount': 2500.0, 'category': 'Переводы'}]
 
 
 @patch('requests.request')
