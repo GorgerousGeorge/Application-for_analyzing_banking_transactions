@@ -12,5 +12,5 @@ def transaction_finder(transactions_dict: list[dict], descr:str) -> json:
     for transaction in transactions_dict:
         if descr in transaction["Категория"].lower() or descr in transaction["Описание"].lower():
             list_of_finders.append(transaction)
-    return json.dumps(list_of_finders, ensure_ascii=False)
+    return json.dumps(list_of_finders, ensure_ascii=False, indent=4)
 
