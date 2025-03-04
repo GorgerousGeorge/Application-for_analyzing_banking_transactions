@@ -1,5 +1,5 @@
-import os
 import json
+import os
 
 
 def reportwriter(filename: str = "Lastreport.json"):

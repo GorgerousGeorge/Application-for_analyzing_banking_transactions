@@ -1,8 +1,6 @@
 import json
-from src.utils import filter_data
-from src.utils import calculate_expenses_and_income
-from src.utils import currency_ratings
-from src.utils import stock_pricer
+
+from src.utils import calculate_expenses_and_income, currency_ratings, filter_data, stock_pricer
 
 
 def events(transactions_df, date_str: str, range_type: str = "M"):
