@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from src.decorators import reportwriter
 from pandas import DataFrame
 import json
 import logging
@@ -12,7 +13,7 @@ file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
 
-
+@reportwriter()
 def sending_by_category(transactions_data: DataFrame, categoryname: str, date: datetime=datetime.now()) -> json:
     """Функция возвращает траты по заданной категории за последние три месяца от переданной даты в переданном датафрейме
      с транзакциями. Если дата не передана, то по умолчанию используется текущая"""

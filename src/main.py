@@ -23,7 +23,7 @@ def main():
                 if user_choice_2 == "W" or user_choice_2 == "M" or user_choice_2 == "Y" or user_choice_2 == "ALL":
                     break
                 else:
-                    print("Выбор не распознан")
+                    print("Выбор не распознан. Убедитесь, что используете английскую раскладку клавиатуры")
             print("Введите конечную дату интервала, за который будем просматривать информацию в формате дд.мм.гггг")
             end_date = input()
             print(events(transaction_data, end_date, user_choice_2))
@@ -35,6 +35,6 @@ def main():
         elif user_choice == 3:
             print("Введите название категории")
             category_name = input()
-            print(sending_by_category(transaction_data, category_name))
+            sending_by_category(transaction_data, category_name))
         else:
-            print("Выбор не распознан. Убедитесь, что используете английскую раскладку клавиатуры")
+            print("Выбор не распознан.")
