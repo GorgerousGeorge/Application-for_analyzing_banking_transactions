@@ -23,9 +23,9 @@ def test_calculate_expenses_and_income(testing_dataframe_3):
     interval_date = filter_data("28.02.2025", "M")
     assert (calculate_expenses_and_income(testing_dataframe_3, interval_date[0], interval_date[1]) ==
             (542.37,
-             [('Переводы', 381.48), ('Супермаркеты', 160.89)],
+             [{'category': 'Переводы', 'amount': 381.48}, {'category': 'Супермаркеты', 'amount': 160.89}],
              0,
-             [('Переводы', 381.48)],
+             [({'category':'Переводы', 'amount': 381.48})],
              0,
              []))
 
